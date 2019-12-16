@@ -11,7 +11,7 @@ import numpy as np
 
 from interp23tap_general import interp23tap_general
 from sklearn.decomposition import PCA
-
+from scipy.misc import imresize
 
 def cs_fusion(hyper_img, pan_img):
     """
@@ -22,8 +22,7 @@ def cs_fusion(hyper_img, pan_img):
     """
 
     # 上取样
-    ratio1 = pan_img.shape(0) / hyper_img.shape(0)
-    hsu = interp23tap_general(hyper_img, ratio1)
+    hsu = imresize(hyper_img, pan_img.size, interp='bicubic')
 
     image_lr = hsu
     image_hr = pan_img
@@ -46,7 +45,7 @@ def cs_fusion(hyper_img, pan_img):
     # matlab a(:) 就是把一个矩阵拉成一个向量
     # matlab a/b : solution of x a = b for x, 在numpy用linalg.lstsq(a,b)
     np.linalg.lstsq(np.std(image_hr.flatten(), ddof=1) + np.mean(i),(image_hr - np.mean(image_hr.flatten())) @ np.std(i, ddof=1))
-    # Replace 1st band with PAN
+    # Replace 1st band with PAN.lan
     f[:, :, 1] = image_hr
 
     # Inverse PCA
