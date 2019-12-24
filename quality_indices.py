@@ -17,11 +17,12 @@ def quality_indices(i_hs, i_ref, ratio):
     bands = i_ref.shape[2]
 
     # 首先计算Cross Correlation
+    # 需要对每个band计算
     out = np.zeros(bands)
     for i in range(bands):
         i_hs_temp = i_hs[ratio:rows - ratio, ratio:cols - ratio, i].flatten()
         i_ref_temp = i_ref[ratio:rows - ratio, ratio:cols - ratio, i].flatten()
         cc = np.corrcoef(i_hs_temp, i_ref_temp)
-        out = cc[0, 1]
-    out = np.mean(out)
+        out[i] = cc[0, 1]
+    out = np.mean(out, axis=0)
     print("CC: ", out)

@@ -52,6 +52,7 @@ if __name__ == '__main__':
     overlap_pan = i_ref[:, :, 0:40]
     i_pan = np.mean(overlap_pan, axis=2)
 
+    # 使用PCA进行图像融合
     i_pca = cs_fusion(i_hs, i_pan)
 
     end_time = datetime.now()
