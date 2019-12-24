@@ -12,6 +12,8 @@ import numpy as np
 
 from pca import cs_fusion
 from conv_downsample import conv_downsample
+from datetime import datetime
+from quality_indices import quality_indices
 
 
 def load_binary_file(filename):
@@ -30,6 +32,7 @@ def load_binary_file(filename):
 
 
 if __name__ == '__main__':
+    start_time = datetime.now()
     # 读取REF文件
     i_ref = load_binary_file('REF')
     i_ref = np.asarray(i_ref)
@@ -50,3 +53,11 @@ if __name__ == '__main__':
     i_pan = np.mean(overlap_pan, axis=2)
 
     i_pca = cs_fusion(i_hs, i_pan)
+
+    end_time = datetime.now()
+    total_time = end_time - start_time
+    print("time for PCA: ", total_time)
+
+    quality_indices(i_pca, i_ref, ratio)
+
+
