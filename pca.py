@@ -21,8 +21,10 @@ def cs_fusion(hyper_img, pan_img):
     :return: 融合后的图像 （mλ * n）
     """
 
+    ratio1 = pan_img.shape[0] / hyper_img.shape[0]
+    ratio1 = int(ratio1)
+    hsu = interp23tap_general(hyper_img, ratio1)
     # 上取样
-    hsu = imresize(hyper_img, pan_img.size, interp='bicubic')
 
     image_lr = hsu
     image_hr = pan_img

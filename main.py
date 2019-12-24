@@ -13,6 +13,7 @@ import numpy as np
 from pca import cs_fusion
 from conv_downsample import conv_downsample
 
+
 def load_binary_file(filename):
     """
     用于读取二进制文件的函数
@@ -41,6 +42,11 @@ if __name__ == '__main__':
     size_kernel = (9, 9)
     sig = (1 / (2 * 2.7725887 / ratio ** 2)) ** 0.5
 
+    # 卷积下采样,获得模糊核以及经过处理的高光谱图
     i_hs, ker_blu = conv_downsample(i_ref, ratio, size_kernel, sig)
-    print(i_hs.shape)
-    print(i_hs[:, :, 0])
+
+    # i_pan 是前1-41幅图各点均值
+    overlap_pan = i_ref[:, :, 0:40]
+    i_pan = np.mean(overlap_pan, axis=2)
+
+    i_pca = cs_fusion(i_hs, i_pan)

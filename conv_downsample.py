@@ -39,11 +39,12 @@ def conv_downsample(ref_image, ratio, size_kernel, sig):
     # 求模糊核
     bluker = matlab_style_gauss2D(size_kernel, sig)
     blurred_image = np.zeros(ref_image.shape)
-    # 因为python只能对每个band求,这里只能用循环实现卷积
+    # 因为python只能对每个band求,这里只能用循环实现滤波
     for i in range(ref_image.shape[2]):
         blurred_image_each_band = scipy.ndimage.convolve(ref_image[:, :, i], bluker, mode='wrap')
         blurred_image[:, :, i] = blurred_image_each_band
 
+    # 每5行5列取一个
     blurred_image = blurred_image[::ratio, ::ratio, :]
 
     return blurred_image, bluker

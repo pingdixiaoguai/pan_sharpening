@@ -14,9 +14,9 @@ from scipy import signal
 
 def interp23tap_general(i_interpolated, ratio):
     tap = 44
-    r = i_interpolated.shape(0)
-    c = i_interpolated.shape(1)
-    b = i_interpolated.shape(2)
+    r = i_interpolated.shape[0]
+    c = i_interpolated.shape[1]
+    b = i_interpolated.shape[2]
 
     base_cut_off = ratio * signal.firwin(tap, 1 / ratio)
 
