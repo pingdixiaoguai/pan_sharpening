@@ -13,6 +13,7 @@ from interp23tap_general import interp23tap_general
 from sklearn.decomposition import PCA
 from scipy.misc import imresize
 
+
 def cs_fusion(hyper_img, pan_img):
     """
     此函数用于将图像进行融合
@@ -29,9 +30,9 @@ def cs_fusion(hyper_img, pan_img):
     image_lr = hsu
     image_hr = pan_img
 
-    n = image_lr.shape(0)
-    m = image_lr.shape(1)
-    d = image_lr.shape(2)
+    n = image_lr.shape[0]
+    m = image_lr.shape[1]
+    d = image_lr.shape[2]
 
     # 使用pca方法分解图片，获取weight以及score.PCA transform on MS bands
     image_lr = np.reshape(image_lr, (n*m, d), order='F')
@@ -46,7 +47,10 @@ def cs_fusion(hyper_img, pan_img):
     i = f[:, :, 1]
     # matlab a(:) 就是把一个矩阵拉成一个向量
     # matlab a/b : solution of x a = b for x, 在numpy用linalg.lstsq(a,b)
-    np.linalg.lstsq(np.std(image_hr.flatten(), ddof=1) + np.mean(i),(image_hr - np.mean(image_hr.flatten())) @ np.std(i, ddof=1))
+    a = image_hr - (np.mean(image_hr.flatten()) * (np.std(i, ddof=1)))
+    b = np.std(image_hr.flatten(), ddof=1)
+    image_hr = a / b + np.mean(i)
+
     # Replace 1st band with PAN.lan
     f[:, :, 1] = image_hr
 
@@ -55,7 +59,7 @@ def cs_fusion(hyper_img, pan_img):
     i_fus_pca = np.reshape(i_fus_pca, (n, m, d))
 
     # Final Linear Equalization
-    for i in range(hsu.shape(2)):
+    for i in range(hsu.shape[2]):
         h = i_fus_pca[:, :, i]
         i_fus_pca[:, :, i] = h - np.mean(h) + np.mean(np.squeeze(hsu[:, :, i]))
 
