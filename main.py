@@ -12,7 +12,6 @@ import numpy as np
 import cv2
 
 from pca import cs_fusion
-from conv_downsample import conv_downsample
 from datetime import datetime
 from quality_indices import quality_indices
 
@@ -42,13 +41,12 @@ if __name__ == '__main__':
     i_ref = np.reshape(i_ref, (395, 185, 176), order='F')
 
     ratio = 5
-    overlap = np.asarray([x for x in range(1, 42)])
     size_kernel = (9, 9)
     sig = (1 / (2 * 2.7725887 / ratio ** 2)) ** 0.5
 
     # 高斯模糊
-    i_hs = cv2.GaussianBlur(i_ref, size_kernel, sig)
-    # i_hs, ker_blu = conv_downsample(i_ref, ratio, size_kernel, sig)
+    i_hs = cv2.GaussianBlur(i_ref, ksize=size_kernel, sigmaX=sig)
+    i_hs = i_hs[::5, ::5]
 
     # i_pan 是前1-41幅图各点均值
     overlap_pan = i_ref[:, :, 0:41]

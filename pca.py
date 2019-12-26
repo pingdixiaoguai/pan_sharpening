@@ -53,8 +53,8 @@ def cs_fusion(hyper_img, pan_img):
     f[:, :, 1] = image_hr
 
     # Inverse PCA
-    i_fus_pca = np.reshape(f, (n * m, d)) @ (weight.conj().transpose())
-    i_fus_pca = np.reshape(i_fus_pca, (n, m, d))
+    i_fus_pca = np.reshape(f, (n * m, d), order='F') @ (weight.conj().transpose())
+    i_fus_pca = np.reshape(i_fus_pca, (n, m, d), order='F')
 
     # Final Linear Equalization
     for i in range(hsu.shape[2]):
