@@ -48,9 +48,11 @@ if __name__ == '__main__':
     # 卷积下采样,获得模糊核以及经过处理的高光谱图
     i_hs, ker_blu = conv_downsample(i_ref, ratio, size_kernel, sig)
 
+
     # i_pan 是前1-41幅图各点均值
     overlap_pan = i_ref[:, :, 0:40]
     i_pan = np.mean(overlap_pan, axis=2)
+    print("i_pan", i_pan)
 
     # 使用PCA进行图像融合
     i_pca = cs_fusion(i_hs, i_pan)
