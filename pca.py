@@ -11,7 +11,6 @@ import numpy as np
 
 from interp23tap_general import interp23tap_general
 from sklearn.decomposition import PCA
-from scipy.misc import imresize
 
 
 def cs_fusion(hyper_img, pan_img):
@@ -21,11 +20,10 @@ def cs_fusion(hyper_img, pan_img):
     :param pan_img: 全色图像 （1 * n）
     :return: 融合后的图像 （mλ * n）
     """
-
+    # 上取样
     ratio1 = pan_img.shape[0] / hyper_img.shape[0]
     ratio1 = int(ratio1)
     hsu = interp23tap_general(hyper_img, ratio1)
-    # 上取样
 
     image_lr = hsu
     image_hr = pan_img
