@@ -9,6 +9,7 @@
 @description: 
 """
 import numpy as np
+import spectral
 
 
 def quality_indices(i_hs, i_ref, ratio):
@@ -26,3 +27,4 @@ def quality_indices(i_hs, i_ref, ratio):
         out[i] = cc[0, 1]
     out = np.mean(out, axis=0)
     print("CC: ", out)
+

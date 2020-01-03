@@ -9,8 +9,8 @@
 
 import struct
 import numpy as np
-import cv2
 
+from conv_downsample import conv_downsample
 from pca import cs_fusion
 from datetime import datetime
 from quality_indices import quality_indices
@@ -36,17 +36,25 @@ if __name__ == '__main__':
     # 读取REF文件
     i_ref = load_binary_file('REF')
     i_ref = np.asarray(i_ref)
+    print(i_ref[0:25])
     # 数据是395*185*176的，因此读出来应该是一个12861200大小的1维向量
     # 将数据转换成395*185*176的以便处理,matlab转换方式是Fortran,所以order='F'
-    i_ref = np.reshape(i_ref, (395, 185, 176), order='F')
+    # 这是个坑，matlab的multibandwrite在读的时候会把数据转置再读，因此必须再python里过两道
+    i_ref = np.reshape(i_ref, (185, 395, 176), order='F')
+    true = np.zeros((395, 185, 176))
+    for i in range(i_ref.shape[2]):
+        true[:, :, i] = i_ref[:, :, i].transpose()
+
+    i_ref = true
 
     ratio = 5
     size_kernel = (9, 9)
     sig = (1 / (2 * 2.7725887 / ratio ** 2)) ** 0.5
 
-    # 高斯模糊
-    i_hs = cv2.GaussianBlur(i_ref, ksize=size_kernel, sigmaX=sig)
-    i_hs = i_hs[::5, ::5]
+    # 下采样
+    i_hs = conv_downsample(i_ref, ratio, size_kernel, sig)
+    print("i_hs")
+    print(i_hs[0:5, 0:5, 1])
 
     # i_pan 是前1-41幅图各点均值
     overlap_pan = i_ref[:, :, 0:41]
