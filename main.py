@@ -36,7 +36,6 @@ if __name__ == '__main__':
     # 读取REF文件
     i_ref = load_binary_file('REF')
     i_ref = np.asarray(i_ref)
-    print(i_ref[0:25])
     # 数据是395*185*176的，因此读出来应该是一个12861200大小的1维向量
     # 将数据转换成395*185*176的以便处理,matlab转换方式是Fortran,所以order='F'
     # 这是个坑，matlab的multibandwrite在读的时候会把数据转置再读，因此必须再python里过两道
@@ -53,8 +52,6 @@ if __name__ == '__main__':
 
     # 下采样
     i_hs = conv_downsample(i_ref, ratio, size_kernel, sig)
-    print("i_hs")
-    print(i_hs[0:5, 0:5, 1])
 
     # i_pan 是前1-41幅图各点均值
     overlap_pan = i_ref[:, :, 0:41]
