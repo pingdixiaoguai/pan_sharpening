@@ -9,7 +9,7 @@
 @description: 
 """
 import numpy as np
-import spectral
+from pysptools.distance import SAM
 
 
 def quality_indices(i_hs, i_ref, ratio):
@@ -41,27 +41,21 @@ def quality_indices(i_hs, i_ref, ratio):
     for i in range(bands):
         i_hs_temp = i_hs[:, :, i].flatten()
         i_ref_temp = i_ref[:, :, i].flatten()
-        molecule = i_hs_temp.T @ i_ref_temp
-        denominator = np.linalg.norm(i_hs_temp) * np.linalg.norm(i_ref_temp)
-        out[i] = np.arccos(molecule / denominator)
-    sam = np.mean(out)
+        out[i] = SAM(i_hs_temp, i_ref_temp)
+    sam = out.mean()
     print("SAM: ", sam)
 
     # 计算root mean squared error(RMSE)
-    temp = i_hs - i_ref
-    out = np.zeros(bands)
-    for i in range(bands):
-        molecule = np.linalg.norm(temp[:, :, i], ord='fro')
-        denominator = (rows * cols * bands) ** 0.5
-        out[i] = molecule / denominator
-    rmse = np.mean(out)
+    molecule = np.linalg.norm((i_hs - i_ref).reshape(rows * cols, -1), ord='fro')
+    denominator = (rows * cols * bands) ** 0.5
+    rmse = molecule / denominator
     print("RMSE: ", rmse)
 
     # 计算erreur relative globale adimensionnelle de synthese(ERGAS)
     err = i_ref - i_hs
     ergas = 0
     for i in range(bands):
-        ergas = ergas + np.linalg.norm(err[:, :, i], ord='fro') / np.linalg.norm(i_hs[:, :, i], ord='fro')
+        ergas = ergas + np.mean(err[:, :, i] ** 2) / np.mean(i_ref[:, :, i] ** 2)
 
     ergas = (100 / ratio) * np.sqrt((1 / err.shape[2]) * ergas)
     print("ERGAS: ", ergas)
